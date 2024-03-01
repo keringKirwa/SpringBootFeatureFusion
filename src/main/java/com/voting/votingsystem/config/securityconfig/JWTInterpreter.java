@@ -54,7 +54,8 @@ public class JWTInterpreter {
 
     public String extractUserName(String JwtToken) {
 
-        return getPropertyFromClaims(JwtToken, Claims::getSubject);
+        Function<Claims, String> subjectResolver = Claims::getSubject;
+        return getPropertyFromClaims(JwtToken, subjectResolver);
 
     }
 
