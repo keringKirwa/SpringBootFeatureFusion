@@ -1,0 +1,39 @@
+package com.voting.votingsystem.config.securityconfig;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig {
+
+    private static final String[] WHITE_LIST_URLS = {"/auth/login", "/mpesa","/auth/test", "/api/bank-accounts/triggerFakeBankAccountGenerator"};
+
+    private final AuthenticationProvider authenticationProvider;
+    private final JwtAuthFilter jwtAuthFilter;
+
+    @Autowired
+    public WebSecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthFilter jwtAuthFilter) {
+        this.authenticationProvider = authenticationProvider;
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+
+
+    @Bean
+    SecurityFilterChain setSecurityFilterChain(HttpSecurity http) throws Exception {
+
+        http.cors().and().csrf().disable(); //prevent attackers from performing cross site request forgery and executing malicious scripts .
+
+        http.authorizeHttpRequests().antMatchers(WHITE_LIST_URLS).permitAll().anyRequest().authenticated().and().authenticationProvider(authenticationProvider).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        http.formLogin().disable();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);//stop the  use of sessions in soring boot .
+        return http.build();
+    }
+}
