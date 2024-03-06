@@ -37,6 +37,7 @@ public class WebSocketController {
     ) {
 
         Objects.requireNonNull(headerAccessor.getSessionAttributes(), "Header accessor was null").put("username", chatMessage.getSender());
+
         kafkaProducerServices.sendMessage(chatMessage);
     }
 
