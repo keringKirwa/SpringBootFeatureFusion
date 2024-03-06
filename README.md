@@ -8,6 +8,10 @@ This repository showcases a Spring Boot application that incorporates various fe
 
 The application integrates with the M-Pesa API to facilitate payment transactions. It includes examples of various M-Pesa functionalities such as C2B (Customer to Business), B2C (Business to Customer), STK (Push), and transaction reversal.
 
+### 4. Web Sockets with Kafka Broker
+The application employs Web Sockets in conjunction with a Kafka broker to enable real-time communication and event-driven interactions
+
+
 ### 2. Callable Interface for Multithreading
 
 Multithreading is implemented using the `Callable` interface to perform asynchronous tasks. This enhances the application's performance by parallelizing certain operations.
