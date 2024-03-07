@@ -1,5 +1,6 @@
 package com.voting.votingsystem.kafka;
 
+import com.voting.votingsystem.ApplicationConstants;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ListTopicsResult;
@@ -14,7 +15,6 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
-
 public class KafkaAdministration {
      private final KafkaAdmin kafkaAdmin;
 
@@ -28,8 +28,9 @@ public class KafkaAdministration {
 
     public void createANewTopic(String topicName) {
         NewTopic newTopic = TopicBuilder.name(topicName)
-                .partitions(3)
-                .replicas(1)
+                .partitions(ApplicationConstants.PARTITION_COUNT)
+                .replicas(ApplicationConstants.REPLICATION_FACTOR)
+                .compact()
                 .build();
         AdminClient adminClient = AdminClient.create(kafkaAdmin.getConfigurationProperties());
         adminClient.createTopics(Collections.singletonList(newTopic));
