@@ -23,13 +23,24 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
-    @Bean
-    public ProducerFactory<String, Message> messageProducerFactory() {
+    private Map<String, Object> producerConfigs() {
         Map<String, Object> config = new HashMap<>();
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:29092");
+
+        String KAFKA_BOOTSTRAP_SERVER = "kafka:29092";
+
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,KAFKA_BOOTSTRAP_SERVER);
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(config);
+        return config;
+    }
+
+    private <T> ProducerFactory<String, T> createProducerFactory(Class<T> messageClass) {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ProducerFactory<String, Message> messageProducerFactory() {
+        return createProducerFactory(Message.class);
     }
 
     @Bean
@@ -39,11 +50,7 @@ public class KafkaProducerConfig {
 
     @Bean
     public ProducerFactory<String, Progress> progressProducerFactory() {
-        Map<String, Object> config = new HashMap<>();
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:29092");
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(config);
+        return createProducerFactory(Progress.class);
     }
 
     @Bean
@@ -51,3 +58,4 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(progressProducerFactory());
     }
 }
+
